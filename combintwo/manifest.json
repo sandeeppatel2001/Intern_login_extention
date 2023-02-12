@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "combine",
+  "version": "1.0.0",
+  "author": "sandeep",
+  "description": "A chrome extension that automatically logs in to github",
+  "icons": {
+    "16": "./icon.jpg",
+    "32": "./icon.jpg",
+    "48": "./icon.jpg",
+    "128": "./icon.jpg"
+  },
+  "content_scripts": [
+    {
+      "js": ["test4.js"],
+      "type": "module",
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["webcam.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "options_page": "webcam.html",
+  "background": {
+    "type": "module",
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_popup": "login.html"
+  },
+
+  "incognito": "split",
+  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "declarativeNetRequestFeedback",
+    "scripting",
+    "activeTab",
+    "identity"
+  ]
+}

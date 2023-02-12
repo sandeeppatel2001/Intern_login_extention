@@ -1,0 +1,133 @@
+!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      form {
+        align-items: center;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        box-sizing: border-box;
+        background-color: #fcee54;
+        flex-wrap: wrap;
+      }
+
+      input {
+        margin: 10px;
+        font-size: 120%;
+        width: 75%;
+        height: 5%;
+        padding: 10px;
+        border: none;
+        font-family: monospace;
+        transition-duration: 0.3s;
+      }
+
+      input:focus {
+        transform: scale(1.2);
+      }
+
+      button {
+        font-size: 200%;
+        background-color: #f5c2e0;
+        border-radius: 5px;
+        border: none;
+        text-align: center;
+        color: black;
+        font-family: monospace;
+        font-weight: bold;
+        transition-duration: 0.3s;
+        padding: 10px;
+        margin-top: 1%;
+      }
+
+      .white_placeholder::placeholder {
+        color: white;
+      }
+      /* gggggggggggggggggggggggg */
+      #cam,
+      #login {
+        border-radius: 4px;
+        background-color: #5ca1e1;
+        border: none;
+        color: #fff;
+        text-align: center;
+        font-size: 32px;
+        padding: 16px;
+        width: 220px;
+        transition: all 0.5s;
+        cursor: pointer;
+        margin: 36px;
+        box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.7);
+      }
+
+      #cam,
+      #login {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+        transition: 0.5s;
+      }
+
+      #cam,
+      #login:after {
+        content: "»";
+        position: absolute;
+        opacity: 0;
+        top: 14px;
+        right: -20px;
+        transition: 0.5s;
+      }
+
+      #cam,
+      #login:hover {
+        padding-right: 24px;
+        padding-left: 8px;
+      }
+
+      #cam,
+      #login:hover:after {
+        opacity: 1;
+        right: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <form>
+      <input placeholder="Name" id="name" />
+      <input type="email" name="email" id="email" placeholder="Email" />
+      <input
+        type="password"
+        name="password"
+        id="password"
+        placeholder="Password"
+      />
+      <input
+        type="password"
+        name="rpassword"
+        id="rpassword"
+        placeholder="Retype-password"
+      />
+
+      <button type="submit">Sign In</button>
+      <a id="login">login</a>
+      <a id="cam">using face</a>
+    </form>
+    <script src="./popup-sign-in-script.js"></script>
+  </body>
+</html>
