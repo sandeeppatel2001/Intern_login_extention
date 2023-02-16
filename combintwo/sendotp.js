@@ -4,16 +4,21 @@ document.getElementById("signup").addEventListener("click", (e) => {
 });
 document.getElementById("send").addEventListener("click", (e) => {
   e.preventDefault();
-  let otp = "";
+  const email = document.querySelector("#email").value;
+
   const req = new XMLHttpRequest();
   const baseUrl = "http://localhost:8000/send";
   const urlParams = {
-    otp: otp,
+    email: email,
   };
 
-  req.open("POST", baseUrl, true);
-  req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  req.send(JSON.stringify(urlParams));
+  if (email) {
+    req.open("POST", baseUrl, true);
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.send(JSON.stringify(urlParams));
+  } else {
+    console.log("enter a email");
+  }
 
   req.onreadystatechange = async function () {
     // Call a function when the state changes.

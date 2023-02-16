@@ -85,7 +85,7 @@
       #send,
       #signup:after {
         content: "»";
-        position: absolute;
+        /* position: absolute; */
         opacity: 0;
         top: 14px;
         right: -20px;
@@ -103,11 +103,28 @@
         opacity: 1;
         right: 10px;
       }
+      input {
+        text-align: center;
+        margin: 10px;
+        font-size: 120%;
+        width: 75%;
+        height: 5%;
+        padding: 10px;
+        border: none;
+        font-family: monospace;
+        transition-duration: 0.3s;
+      }
+
+      input:focus {
+        text-align: center;
+        transform: scale(1.2);
+      }
     </style>
   </head>
 
   <body>
     <form>
+      <input type="email" id="email" placeholder="Email" />
       <button type="submit" id="send">sendotp</button>
       <button id="signup">signup</button>
     </form>

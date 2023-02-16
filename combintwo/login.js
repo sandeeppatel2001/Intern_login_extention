@@ -39,6 +39,7 @@ document.getElementById("otp").addEventListener("click", (e) => {
   e.preventDefault();
   window.location.replace("./sendotp.html");
 });
+
 document.querySelector("form").addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -83,3 +84,25 @@ document.querySelector("form").addEventListener("submit", (event) => {
     document.querySelector("#password").classList.add("white_placeholder");
   }
 });
+
+///////////////////////////////////////
+
+window.onload = function () {
+  const req = new XMLHttpRequest();
+  const baseUrl = "http://localhost:8000/isalreadylogin";
+  const urlParams = {};
+
+  req.open("POST", baseUrl, true);
+  req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  req.send(JSON.stringify(urlParams));
+
+  req.onreadystatechange = async function () {
+    // Call a function when the state changes.
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      let nodedata = JSON.parse(this.responseText);
+      if (nodedata.istrue) {
+        window.location.replace("./success.html");
+      }
+    }
+  };
+};

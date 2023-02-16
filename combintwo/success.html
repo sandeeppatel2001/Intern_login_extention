@@ -1,3 +1,4 @@
+!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -25,19 +26,13 @@
         flex-wrap: wrap;
       }
 
-      input {
-        margin: 10px;
-        font-size: 120%;
-        width: 75%;
-        height: 5%;
-        padding: 10px;
-        border: none;
+      span {
         font-family: monospace;
+        font-weight: bold;
+        color: white;
+        font-size: 6em;
+        text-shadow: 0px 0px 5px black;
         transition-duration: 0.3s;
-      }
-
-      input:focus {
-        transform: scale(1.2);
       }
 
       button {
@@ -57,12 +52,72 @@
       .white_placeholder::placeholder {
         color: white;
       }
+
+      #logout {
+        border-radius: 4px;
+        background-color: #5ca1e1;
+        border: none;
+        color: #fff;
+        text-align: center;
+        font-size: 32px;
+        padding: 16px;
+        width: 220px;
+        transition: all 0.5s;
+        cursor: pointer;
+        margin: 36px;
+        box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.7);
+      }
+      #send {
+        border-radius: 4px;
+        background-color: #11b209;
+        border: none;
+        color: #0e0e0e;
+        text-align: center;
+        font-size: 62px;
+        padding: 16px;
+        width: 440px;
+        transition: all 0.5s;
+        cursor: pointer;
+        margin: 36px;
+        box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.7);
+      }
+      #send,
+      #logout {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+        transition: 0.5s;
+      }
+
+      #send,
+      #logout:after {
+        content: "»";
+        /* position: absolute; */
+        opacity: 0;
+        top: 14px;
+        right: -20px;
+        transition: 0.5s;
+      }
+
+      #send,
+      #logout:hover {
+        padding-right: 24px;
+        padding-left: 8px;
+      }
+
+      #send,
+      #logout:hover:after {
+        opacity: 1;
+        right: 10px;
+      }
     </style>
   </head>
 
   <body>
     <form>
-      <button type="submit">SuccessFullyLogin</button>
+      <button type="submit" id="send">you_loged_in</button>
+      <button id="logout" type="submit">logout</button>
     </form>
+    <script src="./succes.js"></script>
   </body>
 </html>

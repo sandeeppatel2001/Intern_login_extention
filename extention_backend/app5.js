@@ -3,6 +3,7 @@ const crypto = require("crypto");
 let express = require("express");
 const { Client } = require("pg");
 let app = express();
+let fs = require("fs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 var bodyParser = require("body-parser");
@@ -92,28 +93,65 @@ const encrypt = (key, data) => {
 //   pub_key: sec.public_key,
 // };
 //////////////////////////////////////
-app.post("/auth", async (req, res) => {
-  let tokval = req.body.token;
-  if (tokval) {
-    jwt.verify(tokval, "sandeep", { expiresIn: "1h" }, (err, resw) => {
-      if (err) {
-        res.send({ istrue: false });
-        console.log(err);
-      } else {
-        console.log("auth done");
-        return res.send({ istrue: true });
-      }
-    });
-  }
-  res.send();
-});
+app.post("/img_data", (req, res) => {
+  const client = new Client({
+    host: "127.0.0.1",
+    user: "postgres",
+    database: "fusion",
+    password: "Tesla@261600",
+    port: 5000,
+  });
 
+  console.log(req.body.imgdata);
+  const execute = async (query) => {
+    await client.connect(); // gets connection
+    await client.query(query);
+    try {
+      let insertQuery = `INSERT INTO "img_data" (
+        
+        "imgdata"
+        )
+        values('${req.body.imgdata}')`;
+
+      client.query(insertQuery, (err, result) => {
+        if (!err) {
+          console.log("img_Insertion was successful");
+          res.send({ v: "img_Insertion was successful" });
+        } else {
+          console.log(err.message);
+        }
+      });
+      return true;
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await client.end(); // closes connection
+    }
+  };
+  const text = `
+    CREATE TABLE IF NOT EXISTS "img_data" (
+        "imgdata" text NOT NULL
+    );`;
+
+  execute(text).then((result) => {
+    if (result) {
+      res.send({ v: "table created" });
+      console.log("Table created");
+    } else {
+      console.log("eslse");
+    }
+  });
+});
 app.get("/home", (req, res) => {
   res.send("sandeep patel");
 });
 let otpval = 12;
+let emailval = "";
 app.post("/send", (req, res) => {
+  emailval = req.body.email.toLowerCase();
   otpval = Math.floor(100000 + Math.random() * 900000);
+  console.log(otpval);
   let transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
     secureConnection: false,
@@ -130,7 +168,7 @@ app.post("/send", (req, res) => {
   });
   const mailOptions = {
     from: "sandeepkrpatel2002@gmail.com", // Sender address
-    to: "ps0153444@gmail.com", // List of recipients
+    to: `${emailval}`, // List of recipients
     subject: "Node Mailer by sandeep", // Subject line
     text: `Your OTP is ${otpval} send by sandeep code`, // Plain text body
   };
@@ -150,60 +188,61 @@ app.post("/send", (req, res) => {
 app.post("/checkotp", async (req, res) => {
   if (otpval == req.body.otp) {
     console.log("same otp");
-    const client = new Client({
-      host: "localhost",
-      user: "postgres",
-      port: 5000,
-      password: "Tesla@261600",
-      database: "fusion",
-    });
-    await client.connect();
-    let emailval = "s@gmail.com";
-    client.query(
-      `Select * from "extentionlogin" Where  extension_id='3234443' AND email='${emailval}'`,
-      (err, result) => {
-        if (!err) {
-          console.log("!err");
-          console.log(result.rowCount);
-          if (result.rowCount) {
-            //console.log("result", result);
+    try {
+      console.log("try_checking");
+      const client = new Client({
+        host: "localhost",
+        user: "postgres",
+        port: 5000,
+        password: "Tesla@261600",
+        database: "fusion",
+      });
+      await client.connect();
+      client.query(
+        `Select * from "extentionlogin" Where  extension_id='3234443' AND email='${emailval}'`,
+        (err, result) => {
+          if (!err) {
+            console.log(emailval);
+            console.log("!err");
+            console.log(result.rowCount);
+            if (result.rowCount) {
+              //console.log("result", result);
 
-            console.log("result.rows[0]", result.rows[0]);
+              console.log("result.rows[0]", result.rows[0]);
 
-            //generate token
-            const token = jwt.sign(
-              { id: result.rows[0].client_id.toString() },
-              "sandeep"
-            );
-
-            console.log({
-              msg: "logged in successfully",
-              user: result.rows[0].Username,
-              token,
-            });
-            return res.status(200).send({
-              msg: "logged in successfully",
-              istrue: true,
-              token: token,
-              user: email,
-            });
-
-            /////////////////////////////////////////
-          } else {
-            return res.status(401).send({
-              msg: "email or password is incorrect",
-            });
+              const token = jwt.sign(
+                { id: result.rows[0].client_id.toString() },
+                "sandeep",
+                {
+                  expiresIn: 60, // 1 min
+                }
+              );
+              fs.writeFile("tokdata.txt", token, function (err) {
+                if (err) throw err;
+                console.log("Saved!");
+              });
+              console.log({
+                msg: "otp match",
+                user: result.rows[0].Username,
+                token,
+              });
+              return res.status(200).send({
+                msg: "otp logged in successfully",
+                istrue: true,
+                token: token,
+                user: emailval,
+              });
+            }
           }
-        } else {
-          console.log(err);
         }
-      }
-    );
-    return res.send({
-      istrue: true,
-    });
+      );
+    } catch {
+      ////////////////////////////////////////
+      console.log("otp login catch function error");
+    }
+    ////////////////
   } else {
-    console.log("sandeepxxxxxxx");
+    console.log("invalid otp");
     return res.send({
       istrue: false,
     });
@@ -312,30 +351,38 @@ app.post("/login", async (req, res) => {
                     istrue: false,
                     msg: "email or Password is incorrect ",
                   });
+                } else {
+                  const token = jwt.sign(
+                    { id: result.rows[0].client_id.toString() },
+                    "sandeep",
+
+                    {
+                      expiresIn: 60, // 1 week
+                    }
+                  );
+                  fs.writeFile("tokdata.txt", token, function (err) {
+                    if (err) throw err;
+                    console.log("Saved!");
+                  });
+
+                  console.log({
+                    msg: "logged in successfully",
+                    user: result.rows[0].Username,
+                    token,
+                  });
+                  return res.status(200).send({
+                    msg: "logged in successfully",
+                    istrue: true,
+                    token: token,
+                    user: email,
+                  });
                 }
-
-                //generate token
-                const token = jwt.sign(
-                  { id: result.rows[0].client_id.toString() },
-                  "sandeep"
-                );
-
-                console.log({
-                  msg: "logged in successfully",
-                  user: result.rows[0].Username,
-                  token,
-                });
-                return res.status(200).send({
-                  msg: "logged in successfully",
-                  istrue: true,
-                  token: token,
-                  user: email,
-                });
               });
             /////////////////////////////////////////
           } else {
             return res.status(401).send({
               msg: "email or password is incorrect",
+              istrue: false,
             });
           }
         } else {
@@ -347,7 +394,78 @@ app.post("/login", async (req, res) => {
     console.log("login catch function error");
   }
 });
-app.post("/browser", async (req, res) => {
+
+const auth = async (req, res, next) => {
+  try {
+    fs.readFile("tokdata.txt", "utf8", function (err, data) {
+      const token = data;
+
+      if (!token) {
+        console.log("!Token");
+        return res.status(403).send("A token is required for authentication");
+      } else {
+        console.log("tryveryfy");
+        const decoded = jwt.verify(token, "sandeep", (err, res) => {
+          if (err) console.log(err);
+          else {
+            return next();
+          }
+        });
+        req.user = decoded;
+        console.log(req.user);
+      }
+      console.log("tokendata", data);
+    });
+  } catch (err) {
+    return res.status(401).send("Invalid Token");
+  }
+};
+app.post("/isalreadylogin", async (req, ress) => {
+  try {
+    fs.readFile("tokdata.txt", "utf8", function (err, data) {
+      const token = data;
+
+      if (!token) {
+        console.log("!Token");
+        return ress.status(403).send("A token is required for authentication");
+      } else {
+        console.log("tryveryfy");
+        jwt.verify(token, "sandeep", (err, res) => {
+          if (err) console.log(err.message);
+          else {
+            return ress.send({
+              istrue: true,
+            });
+          }
+        });
+        // req.user = decoded;
+        // console.log(req.user);
+      }
+      console.log("tokendata", data);
+    });
+  } catch (err) {
+    return ress.status(401).send({
+      istrue: false,
+      result: "invalid token",
+    });
+  }
+});
+app.post("/logout", (req, res) => {
+  fs.writeFile("tokdata.txt", "", function (err) {
+    if (err) {
+      res.send({
+        istrue: false,
+      });
+      throw err;
+    } else {
+      console.log("logout");
+      res.send({
+        istrue: true,
+      });
+    }
+  });
+});
+app.post("/browser", auth, async (req, res) => {
   // console.log(req.body);
   // console.log(req.body.pub_key);
   // console.log(req.body.der);

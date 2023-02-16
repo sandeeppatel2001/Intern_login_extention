@@ -417,32 +417,8 @@ window.onload = function () {
   // });
   //document.getElementById("loginbtn").onclick = LogIn;
   //console.log(2);
-  function auth() {
-    //let token = window.localStorage.getItem("token");
-    let token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxIiwiaWF0IjoxNjc2MTQxMzUyfQ.ANPKKuHrULnTfsi_Oy_AG09lUEvSD8v72BhQJu_htTM";
-    const req = new XMLHttpRequest();
-    const baseUrl = "http://localhost:8000/auth";
-    const urlParams = {
-      token: token,
-    };
-    console.log("urlParams", urlParams);
-    req.open("POST", baseUrl, true);
-    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    req.send(JSON.stringify(urlParams));
+  LogIn();
 
-    req.onreadystatechange = async function () {
-      // Call a function when the state changes.
-      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-        let nodedata = JSON.parse(this.responseText);
-        console.log(nodedata);
-        if (nodedata.istrue) {
-          LogIn();
-        }
-      }
-    };
-  }
-  auth();
   function LogIn() {
     console.log("Login function run");
     chrome.runtime.sendMessage(
