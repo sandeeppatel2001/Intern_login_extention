@@ -1,16 +1,18 @@
 let msg;
 let tag;
-async function test3() {
+let extentionid;
+let mainflag = 1;
+async function test3(url, id) {
   let ecdhpubk;
   let ecdhprivk;
   // Text to sign:
   //var source = "test";
   let payload = {
     host: "lms.iitjammu.com",
-    url: "https://lms.iitjammu.ac.in/login/index.php",
+    url: url,
     time: 2222,
     ClientId: "mdskdsfjkdvndksjvvnkfv",
-    extentionid: "1111111111111111111",
+    extentionid: id,
   };
   let priv;
   var source = JSON.stringify(payload);
@@ -257,122 +259,126 @@ async function test3() {
     req.onreadystatechange = async function () {
       // Call a function when the state changes.
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-        let nodedata = JSON.parse(this.responseText);
-        console.log("pubk", nodedata.pub_key);
-        const serverhexkey = nodedata.pub_key;
-        //let pemk = pubKeyToPEM(serverhexkey);
-        function importECDSAKey(serverhexkey) {
-          let encoded_key = new Uint8Array(
-            serverhexkey.match(/../g).map((h) => parseInt(h, 16))
-          ).buffer;
-          return window.crypto.subtle.importKey(
-            "raw",
-            encoded_key,
-            {
-              name: "ECDH",
-              namedCurve: "P-256",
-            },
-            true,
-            []
-          );
-        }
-        importECDSAKey(serverhexkey).then(async (res) => {
-          console.log(res);
-          let secret = await deriveSharedSecret(ecdhprivk, res);
-          console.log(secret);
-          console.log("after derisecret function");
-          let hmacdata = nodedata.pub_key + nodedata.iv + nodedata.ciphertext;
-          console.log(hmacdata);
-          let hmac2 = await hmac_tt(secret.hmac, hmacdata);
-          console.log(hmac2);
-          if (nodedata.hmac == hmac2) {
-            console.log("sfsdvdfvgrg");
-            decryptMessage(secret.secret, {
-              iv: nodedata.iv,
-              ciphertext: nodedata.ciphertext,
-            }).then((ms) => {
-              console.log(ms);
-              msg = ms;
-              let data = msg;
-              console.log(data);
-              console.log(JSON.parse(data));
-              if (data) {
-                console.log("if");
-
-                let Data = JSON.parse(data);
-                console.log("Data", Data);
-                let User = Data.username;
-                let Password = Data.password;
-
-                console.log(Password, User);
-                document.querySelectorAll("input").forEach((inputtag) => {
-                  v.push(inputtag);
-                  if (
-                    inputtag.type == "email" ||
-                    inputtag.name.indexOf("email") + 1 ||
-                    inputtag.id.indexOf("email") + 1
-                  ) {
-                    flag = true;
-                    console.log("trueemail");
-                    setTimeout(() => {
-                      inputtag.value = User;
-                    }, 0);
-                  }
-                  if (inputtag.type == "password") {
-                    let pertag = v[v.length - 2];
-                    findtag();
-                    setTimeout(() => {
-                      // inputtag.autocomplete = "new-password";
-                      console.log(Password);
-                      inputtag.value = Password;
-
-                      if (!flag) {
-                        console.log("uperpassword");
-                        // pertag.autocomplete = "new-password";
-                        pertag.value = User;
-                        console.log(pertag.value);
-                      }
-                    }, 0);
-                  }
-                });
-                //document.querySelectorAll("[id*=user]").values = "sandddd";
-                //console.log(v);
-                if (!flag) {
-                  flag2 = true;
-                  document.querySelectorAll("[id*=user]").forEach((r) => {
-                    setTimeout(() => {
-                      console.log("!flag");
-                      document.getElementById(r.id).value = User;
-                    }, 0);
-                  });
-                }
-                if (!flag & !flag2) {
-                  flag3 = true;
-                  document.querySelectorAll("[id*=User]").forEach((r) => {
-                    setTimeout(() => {
-                      console.log("!flag & !flag2");
-                      document.getElementById(r.id).value = User;
-                    }, 0);
-                  });
-                }
-                if (!flag & !flag2 & !flag3) {
-                  document.querySelectorAll("[id*=name]").forEach((r) => {
-                    setTimeout(() => {
-                      document.getElementById(r.id).value = User;
-                      console.log("!flag & !flag2 & !flag3");
-                    }, 0);
-                  });
-                }
-                setTimeout(() => {
-                  console.log("done");
-                  tag.click();
-                }, 0);
-              }
-            });
+        console.log(this.responseText);
+        if (this.responseText) {
+          mainflag = 0;
+          let nodedata = JSON.parse(this.responseText);
+          console.log("pubk", nodedata.pub_key);
+          const serverhexkey = nodedata.pub_key;
+          //let pemk = pubKeyToPEM(serverhexkey);
+          function importECDSAKey(serverhexkey) {
+            let encoded_key = new Uint8Array(
+              serverhexkey.match(/../g).map((h) => parseInt(h, 16))
+            ).buffer;
+            return window.crypto.subtle.importKey(
+              "raw",
+              encoded_key,
+              {
+                name: "ECDH",
+                namedCurve: "P-256",
+              },
+              true,
+              []
+            );
           }
-        });
+          importECDSAKey(serverhexkey).then(async (res) => {
+            console.log(res);
+            let secret = await deriveSharedSecret(ecdhprivk, res);
+            console.log(secret);
+            console.log("after derisecret function");
+            let hmacdata = nodedata.pub_key + nodedata.iv + nodedata.ciphertext;
+            console.log(hmacdata);
+            let hmac2 = await hmac_tt(secret.hmac, hmacdata);
+            console.log(hmac2);
+            if (nodedata.hmac == hmac2) {
+              console.log("sfsdvdfvgrg");
+              decryptMessage(secret.secret, {
+                iv: nodedata.iv,
+                ciphertext: nodedata.ciphertext,
+              }).then((ms) => {
+                console.log(ms);
+                msg = ms;
+                let data = msg;
+                console.log(data);
+                console.log(JSON.parse(data));
+                if (data) {
+                  console.log("if");
 
-        console.log("Got response 200!", JSON.parse(this.responseText));
+                  let Data = JSON.parse(data);
+                  console.log("Data", Data);
+                  let User = Data.username;
+                  let Password = Data.password;
+
+                  console.log(Password, User);
+                  document.querySelectorAll("input").forEach((inputtag) => {
+                    v.push(inputtag);
+                    if (
+                      inputtag.type == "email" ||
+                      inputtag.name.indexOf("email") + 1 ||
+                      inputtag.id.indexOf("email") + 1
+                    ) {
+                      flag = true;
+                      console.log("trueemail");
+                      setTimeout(() => {
+                        inputtag.value = User;
+                      }, 0);
+                    }
+                    if (inputtag.type == "password") {
+                      let pertag = v[v.length - 2];
+
+                      setTimeout(() => {
+                        // inputtag.autocomplete = "new-password";
+                        console.log(Password);
+                        inputtag.value = Password;
+
+                        if (!flag) {
+                          console.log("uperpassword");
+                          // pertag.autocomplete = "new-password";
+                          pertag.value = User;
+                          console.log(pertag.value);
+                        }
+                      }, 0);
+                    }
+                  });
+                  //document.querySelectorAll("[id*=user]").values = "sandddd";
+                  //console.log(v);
+                  if (!flag) {
+                    flag2 = true;
+                    document.querySelectorAll("[id*=user]").forEach((r) => {
+                      setTimeout(() => {
+                        console.log("!flag");
+                        document.getElementById(r.id).value = User;
+                      }, 0);
+                    });
+                  }
+                  if (!flag & !flag2) {
+                    flag3 = true;
+                    document.querySelectorAll("[id*=User]").forEach((r) => {
+                      setTimeout(() => {
+                        console.log("!flag & !flag2");
+                        document.getElementById(r.id).value = User;
+                      }, 0);
+                    });
+                  }
+                  if (!flag & !flag2 & !flag3) {
+                    document.querySelectorAll("[id*=name]").forEach((r) => {
+                      setTimeout(() => {
+                        document.getElementById(r.id).value = User;
+                        console.log("!flag & !flag2 & !flag3");
+                      }, 0);
+                    });
+                  }
+                  setTimeout(() => {
+                    console.log("done");
+                    tag.click();
+                  }, 0);
+                }
+              });
+            }
+          });
+
+          console.log("Got response 200!", JSON.parse(this.responseText));
+        }
       }
     };
   };
@@ -388,60 +394,151 @@ let flag2 = false;
 let flag3 = false;
 let flag4 = false;
 let flag5 = false;
-let findtag = () => {
-  document.querySelectorAll("input").forEach((input) => {
-    if (input.type == "submit") {
-      flag5 = true;
 
-      tag = input;
-      console.log("submitinput");
-    }
-  });
-  if (!flag5) {
-    document.querySelectorAll("button").forEach((input) => {
-      //console.log("buton", input);
-      //console.log(1);
-      //console.log(input);
+window.onload = async function () {
+  let findtag = () => {
+    document.querySelectorAll("input").forEach((input) => {
       if (input.type == "submit") {
-        // input.onclick = LogIn;
+        flag5 = true;
+
         tag = input;
-        console.log("submittyp");
+        LogIn();
+        console.log("submitinput");
       }
     });
-  }
-};
-window.onload = function () {
+    if (!flag5) {
+      document.querySelectorAll("button").forEach((input) => {
+        //console.log("buton", input);
+        //console.log(1);
+        //console.log(input);
+        if (input.type == "submit") {
+          // input.onclick = LogIn;
+          tag = input;
+          LogIn();
+          console.log("submittyp");
+        }
+      });
+    }
+  };
+  findtag();
   // document.querySelectorAll("[id*=login]").forEach((res) => {
   //   document.getElementById(res.id).t = LogIn;
   //   console.log("geteliment");
   // });
   //document.getElementById("loginbtn").onclick = LogIn;
   //console.log(2);
-  LogIn();
 
   function LogIn() {
     console.log("Login function run");
+
     chrome.runtime.sendMessage(
       "oiklfjbjmdhnakcjhkabcmepmkneaogf",
       "get-user-data",
-      async (response) => {
-        // 3. Got an asynchronous response with the data from the service worker
-        console.log("received user data ", await response);
+      (response) => {
+        url = response.url;
+        extentionid = response.id;
+        console.log("url", url);
+        str = JSON.stringify(url);
+        console.log(str);
+        test3(url, extentionid);
+        tag.addEventListener("click", (e) => {
+          if (mainflag == 1) {
+            savedata(url, extentionid);
+          }
+        });
       }
     );
-    setTimeout(() => {
-      chrome.runtime.sendMessage(
-        "oiklfjbjmdhnakcjhkabcmepmkneaogf",
-        "get-user-data",
-        (response) => {
-          url = response;
-          console.log("url", url);
-          str = JSON.stringify(url);
-          console.log(str);
-          test3();
-        }
-      );
-      console.log("hi");
-    }, 4);
+    console.log("hi");
   }
 };
+
+function savedata(url, extentionid) {
+  console.log("else");
+
+  let User;
+  let Password;
+
+  document.querySelectorAll("input").forEach((inputtag) => {
+    v.push(inputtag);
+    if (
+      inputtag.type == "email" ||
+      inputtag.name.indexOf("email") + 1 ||
+      inputtag.id.indexOf("email") + 1
+    ) {
+      flag = true;
+      console.log("trueemail");
+      setTimeout(() => {
+        User = inputtag.value;
+      }, 0);
+    }
+    if (inputtag.type == "password") {
+      let pertag = v[v.length - 2];
+      console.log("else password", inputtag.value);
+      setTimeout(() => {
+        Password = inputtag.value;
+        console.log(Password);
+        if (!flag) {
+          // pertag.autocomplete = "new-password";
+          User = pertag.value;
+          if (User) {
+            flag4 = true;
+          }
+          console.log("User pretag", User);
+        }
+      }, 0);
+    }
+  });
+
+  //document.querySelectorAll("[id*=user]").values = "sandddd";
+  // console.log(v);
+  setTimeout(() => {
+    if (!flag & !flag4) {
+      flag2 = true;
+      document.querySelectorAll("[id*=user]").forEach((r) => {
+        User = document.getElementById(r.id).value;
+        console.log("!flag,!flag4", User);
+      });
+    }
+    if (!flag & !flag2) {
+      flag3 = true;
+      document.querySelectorAll("[id*=User]").forEach((r) => {
+        setTimeout(() => {
+          User = document.getElementById(r.id).value;
+          console.log("!flag&!flage2", User);
+        }, 0);
+      });
+    }
+    if (!flag & !flag2 & !flag3) {
+      document.querySelectorAll("[id*=name]").forEach((r) => {
+        setTimeout(() => {
+          User = document.getElementById(r.id).value;
+          console.log("!flag&!flag2&!flage3", User);
+        }, 0);
+      });
+    }
+  }, 2);
+  setTimeout(() => {
+    let obj2 = {
+      username: User,
+      Password: Password,
+      extentionid,
+      url,
+    };
+    console.log(obj2);
+    const req = new XMLHttpRequest();
+    const baseUrl = "http://localhost:8000/credential";
+    const urlParams = obj2;
+
+    req.open("POST", baseUrl, true);
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.send(JSON.stringify(urlParams));
+
+    req.onreadystatechange = async function () {
+      // Call a function when the state changes.
+      if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+        let nodedata = JSON.parse(this.responseText);
+        console.log(nodedata);
+      }
+    };
+  }, 4);
+}

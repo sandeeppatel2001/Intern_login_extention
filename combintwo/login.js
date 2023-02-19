@@ -66,7 +66,7 @@ document.querySelector("form").addEventListener("submit", (event) => {
         console.log(nodedata);
         if (nodedata.istrue) {
           ////////////////////////////////////////
-
+          //chrome.storage.local.set({ token: nodedata.token });
           //window.localStorage.setItem("token", JSON.stringify(nodedata.token));
           console.log(nodedata.token);
           window.location.replace("./success.html");

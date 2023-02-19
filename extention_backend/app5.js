@@ -356,7 +356,7 @@ app.post("/login", async (req, res) => {
                     "sandeep",
 
                     {
-                      expiresIn: 60, // 1 week
+                      expiresIn: 3000, // 1 week
                     }
                   );
                   fs.writeFile("tokdata.txt", token, function (err) {
@@ -465,17 +465,18 @@ app.post("/logout", (req, res) => {
   });
 });
 app.post("/browser", auth, async (req, res) => {
-  // console.log(req.body);
-  // console.log(req.body.pub_key);
-  // console.log(req.body.der);
+  console.log(req.body);
+  console.log("/browser");
+  let browserdata = JSON.parse(req.body.payload);
+  console.log(browserdata);
   var puKeyPem2 = req.body.pub_key;
   let p = req.body.p;
-  console.log(p);
+  console.log(req.body.payload);
   var hexSign2 = req.body.der;
-  var verifier = crypto.createVerify("sha256"),
-    //digest = "test";
-    digest = JSON.stringify(payload);
-  verifier.update(digest);
+  var verifier = crypto.createVerify("sha256");
+  //digest = "test";
+  // digest = JSON.stringify(payload);
+  verifier.update(req.body.payload);
   verifier.end();
   let g = verifier.verify(puKeyPem2, hexSign2, "hex");
   if (g == true) {
@@ -495,17 +496,17 @@ app.post("/browser", auth, async (req, res) => {
         });
         await client.connect();
         client.query(
-          `Select * from "passwordmgmr" Where  website='website' AND extension_id='3234443' AND client_id=21`,
+          `Select * from "passwordmgnr" Where  website='${browserdata.url}' AND extension_id='${browserdata.extentionid}' AND client_id=21`,
           (err, result) => {
             if (!err) {
               if (result.rowCount) {
                 //console.log("result", result);
                 let sdata = result.rows[0];
-                console.log(sdata);
-                console.log(sdata.fullname);
-                console.log(sdata.password);
+                console.log("sdata", sdata);
+                console.log("sdata.fullname", sdata.fullname);
+                console.log("sdata.password", sdata.password);
                 let mailorname;
-                if (!sdata.email) {
+                if (sdata.email) {
                   mailorname = sdata.email;
                 } else {
                   mailorname = sdata.fullname;
@@ -535,7 +536,8 @@ app.post("/browser", auth, async (req, res) => {
 
                 // res.send(result.rows[0]);
               } else {
-                console.log("some error", err);
+                console.log("user not exist");
+                res.send(null);
               }
             } else {
               console.log(err);
@@ -548,6 +550,8 @@ app.post("/browser", auth, async (req, res) => {
       }
     };
     postgres();
+  } else {
+    console.log("payload not matching");
   }
 
   //return res.send(finalpayload);
@@ -555,6 +559,86 @@ app.post("/browser", auth, async (req, res) => {
 //function send(data) {}
 // verifier.end();
 // console.log(verifier.verify(puKeyPem, hexSign, "hex"));
+
+app.post("/credential", auth, (req, res) => {
+  console.log("credential");
+  const client = new Client({
+    host: "127.0.0.1",
+    user: "postgres",
+    database: "fusion",
+    password: "Tesla@261600",
+    port: 5000,
+  });
+
+  const execute = async (query) => {
+    let _username = req.body.username;
+    let _Password = req.body.Password;
+    let _Exid = req.body.extentionid;
+    let _url = req.body.url;
+    let _email = "";
+    const emailvalidator = require("email-validator");
+    if (emailvalidator.validate(_username)) {
+      _email = _username;
+      _username = "";
+    }
+    console.log(_username, _Password);
+    //_Password = await bcrypt.hash(_Password, 8);
+    await client.connect(); // gets connection
+    await client.query(query);
+    try {
+      let insertQuery = `INSERT INTO "passwordmgnr" (
+        "extension_id" ,
+        "client_id" ,
+        "email" ,
+        "website" ,
+        "password" ,
+        "pubkey" ,
+        "expiry" ,
+        "fullname"
+        )
+        values('${_Exid}', '${21}', '${_email}', '${_url}', '${_Password}', '${"pubkey"}', '${"expiry"}', '${_username}')`;
+
+      client.query(insertQuery, (err, result) => {
+        if (!err) {
+          console.log("Insertion was successful");
+          res.send({ v: "Insertion was successful" });
+          return true;
+        } else {
+          console.log(err.message);
+          res.send({ v: "Insertion was not done" });
+          return false;
+        }
+      });
+    } catch (error) {
+      console.error(error.stack);
+      res.send({ v: "catchfunction running at /credential" });
+      return false;
+    } finally {
+      // closes connection
+    }
+  };
+
+  const text = `
+    CREATE TABLE IF NOT EXISTS "passwordmgnr" (
+        "extension_id" VARCHAR(64),
+	    "client_id" SERIAL,
+        "email" VARCHAR(128),
+        "website" VARCHAR(256),
+        "password" VARCHAR(256),
+        "pubkey" VARCHAR(256),
+        "expiry" VARCHAR(256),
+	    "fullname" VARCHAR(100) 
+    );`;
+
+  execute(text).then((result) => {
+    if (result) {
+      res.send({ v: "table created" });
+      console.log("Table created");
+    } else {
+      console.log("eslse db creat if not exist");
+    }
+  });
+});
 app.listen(8000, () => {
   console.log(`listen at port ${8000}`);
 });
