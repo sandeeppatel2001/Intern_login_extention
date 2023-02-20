@@ -14,6 +14,9 @@ app.get("/", (req, res) => {
   res.cookie("ffff", "ttttttt", { httpOnly: true });
   res.send("sandeepp");
 });
+app.post("/", () => {
+  console.log("sandeep");
+});
 app.listen("3000", () => {
   console.log("listing at 3000");
 });
