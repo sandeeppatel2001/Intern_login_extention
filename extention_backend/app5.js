@@ -15,6 +15,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const nodemailer = require("nodemailer");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 let payload = {
   host: "lms.iitjammu.com",
@@ -359,16 +361,18 @@ app.post("/login", async (req, res) => {
                       expiresIn: 3000, // 1 week
                     }
                   );
-                  fs.writeFile("tokdata.txt", token, function (err) {
-                    if (err) throw err;
-                    console.log("Saved!");
-                  });
+                  console.log(token);
+                  // fs.writeFile("tokdata.txt", token, function (err) {
+                  //   if (err) throw err;
+                  //   console.log("Saved!");
+                  // });
 
-                  console.log({
+                  console.log("aa", {
                     msg: "logged in successfully",
                     user: result.rows[0].Username,
                     token,
                   });
+
                   return res.status(200).send({
                     msg: "logged in successfully",
                     istrue: true,
@@ -396,58 +400,40 @@ app.post("/login", async (req, res) => {
 
 const auth = async (req, res, next) => {
   try {
-    fs.readFile("tokdata.txt", "utf8", function (err, data) {
-      const token = data;
+    // fs.readFile("tokdata.txt", "utf8", function (err, data) {
+    //   const token = data;
+    token = req.body.token;
+    console.log("authfunxction");
+    console.log("auth", req.body);
+    console.log("authfunction", token);
+    if (!token) {
+      console.log("!Token");
+      return res.status(403).send("A token is required for authentication");
+    } else {
+      console.log("tryveryfy");
+      const decoded = jwt.verify(token, "sandeep", (err, res) => {
+        console.log("res", res);
+        if (err) {
+          console.log(err);
+          //return;
+        } else {
+          console.log("verify true");
+          // req.user = decoded;
+          // console.log(req.user);
+          return next();
+        }
+      });
+    }
 
-      if (!token) {
-        console.log("!Token");
-        return res.status(403).send("A token is required for authentication");
-      } else {
-        console.log("tryveryfy");
-        const decoded = jwt.verify(token, "sandeep", (err, res) => {
-          if (err) console.log(err);
-          else {
-            return next();
-          }
-        });
-        req.user = decoded;
-        console.log(req.user);
-      }
-      console.log("tokendata", data);
-    });
+    //});
   } catch (err) {
     return res.status(401).send("Invalid Token");
   }
 };
-app.post("/isalreadylogin", async (req, ress) => {
-  try {
-    fs.readFile("tokdata.txt", "utf8", function (err, data) {
-      const token = data;
-
-      if (!token) {
-        console.log("!Token");
-        return ress.status(403).send("A token is required for authentication");
-      } else {
-        console.log("tryveryfy");
-        jwt.verify(token, "sandeep", (err, res) => {
-          if (err) console.log(err.message);
-          else {
-            return ress.send({
-              istrue: true,
-            });
-          }
-        });
-        // req.user = decoded;
-        // console.log(req.user);
-      }
-      console.log("tokendata", data);
-    });
-  } catch (err) {
-    return ress.status(401).send({
-      istrue: false,
-      result: "invalid token",
-    });
-  }
+app.post("/isalreadylogin", auth, async (req, res) => {
+  return res.send({
+    istrue: true,
+  });
 });
 app.post("/logout", (req, res) => {
   fs.writeFile("tokdata.txt", "", function (err) {

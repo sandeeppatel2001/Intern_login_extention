@@ -43,6 +43,8 @@
     "declarativeNetRequestFeedback",
     "scripting",
     "activeTab",
-    "identity"
+    "identity",
+    "storage",
+    "alarms"
   ]
 }

@@ -2,7 +2,7 @@ let msg;
 let tag;
 let extentionid;
 let mainflag = 1;
-async function test3(url, id) {
+async function test3(url, id, token) {
   let ecdhpubk;
   let ecdhprivk;
   // Text to sign:
@@ -144,6 +144,7 @@ async function test3(url, id) {
                         pub_key: pubKey,
                         der: der,
                         p,
+                        token,
                       };
                       if (res) {
                         console.log(res);
@@ -394,7 +395,7 @@ let flag2 = false;
 let flag3 = false;
 let flag4 = false;
 let flag5 = false;
-
+let mflag = 0;
 window.onload = async function () {
   let findtag = () => {
     document.querySelectorAll("input").forEach((input) => {
@@ -402,7 +403,7 @@ window.onload = async function () {
         flag5 = true;
 
         tag = input;
-        LogIn();
+        mflag = 1;
         console.log("submitinput");
       }
     });
@@ -414,13 +415,16 @@ window.onload = async function () {
         if (input.type == "submit") {
           // input.onclick = LogIn;
           tag = input;
-          LogIn();
+          mflag = 1;
           console.log("submittyp");
         }
       });
     }
+    if (mflag == 1) LogIn();
   };
   findtag();
+  ////////////////////////////
+
   // document.querySelectorAll("[id*=login]").forEach((res) => {
   //   document.getElementById(res.id).t = LogIn;
   //   console.log("geteliment");
@@ -433,17 +437,19 @@ window.onload = async function () {
 
     chrome.runtime.sendMessage(
       "oiklfjbjmdhnakcjhkabcmepmkneaogf",
-      "get-user-data",
+      { m: "get-user-data" },
       (response) => {
         url = response.url;
         extentionid = response.id;
         console.log("url", url);
-        str = JSON.stringify(url);
-        console.log(str);
-        test3(url, extentionid);
+
+        console.log(response);
+        test3(url, extentionid, response.l);
         tag.addEventListener("click", (e) => {
+          // e.preventDefault();
           if (mainflag == 1) {
-            savedata(url, extentionid);
+            console.log(response.l);
+            savedata(url, extentionid, response.l);
           }
         });
       }
@@ -452,9 +458,9 @@ window.onload = async function () {
   }
 };
 
-function savedata(url, extentionid) {
+function savedata(url, extentionid, token) {
   console.log("else");
-
+  console.log(token);
   let User;
   let Password;
 
@@ -523,7 +529,9 @@ function savedata(url, extentionid) {
       Password: Password,
       extentionid,
       url,
+      token: token,
     };
+
     console.log(obj2);
     const req = new XMLHttpRequest();
     const baseUrl = "http://localhost:8000/credential";
