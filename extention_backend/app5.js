@@ -27,12 +27,7 @@ app.use(cookieParser());
 //   extentionid: "1111111111111111111",
 // };
 let data;
-// let data = {
-//   username: "2020umt0182",
-//   password: "Glxy@261600",
-// };
-// data = JSON.stringify(data);
-// console.log("sandeep patel");
+
 /////////////////////////////////////
 
 ////////////////////////////////////////
