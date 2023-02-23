@@ -29,10 +29,17 @@ document.getElementById("submitotp").addEventListener("click", (e) => {
       let nodedata = JSON.parse(this.responseText);
       console.log(nodedata);
       if (nodedata.istrue) {
+        chrome.runtime.sendMessage("oiklfjbjmdhnakcjhkabcmepmkneaogf", {
+          m: "savetoken",
+          h: nodedata.token,
+        });
+        ////////////////////////////////////////
+        //chrome.storage.local.set({ token: nodedata.token });
         //window.localStorage.setItem("token", JSON.stringify(nodedata.token));
-
+        console.log(nodedata);
         window.location.replace("./success.html");
-      } else {
+      }
+      else {
         console.log("elselogin", nodedata);
       }
     }

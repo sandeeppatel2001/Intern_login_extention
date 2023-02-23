@@ -1,16 +1,17 @@
 const crypto = require("crypto");
-//let secretkey = "gax4nXE8yphF0QA6DWU0mTTNDvTDxFsO";
-let express = require("express");
+// let secretkey = "gax4nXE8yphF0QA6DWU0mTTNDvTDxFsO";
+const express = require("express");
+
 const { Client } = require("pg");
-let app = express();
-let fs = require("fs");
+const app = express();
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 var bodyParser = require("body-parser");
 const cors = require("cors");
-const { json } = require("express");
-const { stringify } = require("querystring");
-const { hasSubscribers } = require("diagnostics_channel");
+//const { json } = require("express");
+//const { stringify } = require("querystring");
+//const { hasSubscribers } = require("diagnostics_channel");
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -18,13 +19,13 @@ const nodemailer = require("nodemailer");
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
-let payload = {
-  host: "lms.iitjammu.com",
-  url: "https://lms.iitjammu.ac.in/login/index.php",
-  time: 2222,
-  ClientId: "mdskdsfjkdvndksjvvnkfv",
-  extentionid: "1111111111111111111",
-};
+// let payload = {
+//   host: "lms.iitjammu.com",
+//   url: "https://lms.iitjammu.ac.in/login/index.php",
+//   time: 2222,
+//   ClientId: "mdskdsfjkdvndksjvvnkfv",
+//   extentionid: "1111111111111111111",
+// };
 let data;
 // let data = {
 //   username: "2020umt0182",
@@ -114,6 +115,7 @@ app.post("/img_data", (req, res) => {
         )
         values('${req.body.imgdata}')`;
 
+      // eslint-disable-next-line no-unused-vars
       client.query(insertQuery, (err, result) => {
         if (!err) {
           console.log("img_Insertion was successful");
@@ -165,7 +167,7 @@ app.post("/send", (req, res) => {
       user: "sandeepkrpatel2002@gmail.com",
       pass: "riuwaswnpaqafoga",
     },
-    tls: { rejectUnauthorized: true },
+    // tls: { rejectUnauthorized: true },
   });
   const mailOptions = {
     from: "sandeepkrpatel2002@gmail.com", // Sender address
@@ -215,13 +217,10 @@ app.post("/checkotp", async (req, res) => {
                 { id: result.rows[0].client_id.toString() },
                 "sandeep",
                 {
-                  expiresIn: 60, // 1 min
+                  expiresIn: 3000, 
                 }
               );
-              fs.writeFile("tokdata.txt", token, function (err) {
-                if (err) throw err;
-                console.log("Saved!");
-              });
+              
               console.log({
                 msg: "otp match",
                 user: result.rows[0].Username,
@@ -282,6 +281,7 @@ app.post("/sing", async (req, res) => {
         )
         values(${3234443}, ${21}, '${newUsername}', '${loweremail}', '${newPass}')`;
 
+      // eslint-disable-next-line no-unused-vars
       client.query(insertQuery, (err, result) => {
         if (!err) {
           console.log("Insertion was successful");
@@ -402,16 +402,16 @@ const auth = async (req, res, next) => {
   try {
     // fs.readFile("tokdata.txt", "utf8", function (err, data) {
     //   const token = data;
-    token = req.body.token;
+    const authtoken = req.body.token;
     console.log("authfunxction");
     console.log("auth", req.body);
-    console.log("authfunction", token);
-    if (!token) {
+    console.log("authfunction", authtoken);
+    if (!authtoken) {
       console.log("!Token");
-      return res.status(403).send("A token is required for authentication");
+      return res.status(403).send("A token_ is required for authentication");
     } else {
       console.log("tryveryfy");
-      const decoded = jwt.verify(token, "sandeep", (err, res) => {
+      jwt.verify(authtoken, "sandeep", (err, res) => {
         console.log("res", res);
         if (err) {
           console.log(err);
@@ -435,21 +435,7 @@ app.post("/isalreadylogin", auth, async (req, res) => {
     istrue: true,
   });
 });
-app.post("/logout", (req, res) => {
-  fs.writeFile("tokdata.txt", "", function (err) {
-    if (err) {
-      res.send({
-        istrue: false,
-      });
-      throw err;
-    } else {
-      console.log("logout");
-      res.send({
-        istrue: true,
-      });
-    }
-  });
-});
+
 app.post("/browser", auth, async (req, res) => {
   console.log(req.body);
   console.log("/browser");
@@ -584,6 +570,7 @@ app.post("/credential", auth, (req, res) => {
         )
         values('${_Exid}', '${21}', '${_email}', '${_url}', '${_Password}', '${"pubkey"}', '${"expiry"}', '${_username}')`;
 
+      // eslint-disable-next-line no-unused-vars
       client.query(insertQuery, (err, result) => {
         if (!err) {
           console.log("Insertion was successful");
