@@ -1,10 +1,10 @@
 const crypto = require("crypto");
 // let secretkey = "gax4nXE8yphF0QA6DWU0mTTNDvTDxFsO";
 const express = require("express");
-
+const fs=require("fs");
 const { Client } = require("pg");
 const app = express();
-
+const emailvalidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 var bodyParser = require("body-parser");
@@ -91,101 +91,143 @@ const encrypt = (key, data) => {
 // };
 //////////////////////////////////////
 app.post("/img_data", (req, res) => {
-  const client = new Client({
-    host: "127.0.0.1",
-    user: "postgres",
-    database: "fusion",
-    password: "Tesla@261600",
-    port: 5000,
-  });
-
-  console.log(req.body.imgdata);
-  const execute = async (query) => {
-    await client.connect(); // gets connection
-    await client.query(query);
-    try {
-      let insertQuery = `INSERT INTO "img_data" (
-        
-        "imgdata"
-        )
-        values('${req.body.imgdata}')`;
-
-      // eslint-disable-next-line no-unused-vars
-      client.query(insertQuery, (err, result) => {
-        if (!err) {
-          console.log("img_Insertion was successful");
-          res.send({ v: "img_Insertion was successful" });
-        } else {
-          console.log(err.message);
-        }
+  fs.appendFile('img.txt', req.body.imgdata, function (err) {
+    if (err) throw err;
+    else{
+      res.send({
+        istrue:true,
       });
-      return true;
-    } catch (error) {
-      console.error(error.stack);
-      return false;
-    } finally {
-      await client.end(); // closes connection
-    }
-  };
-  const text = `
-    CREATE TABLE IF NOT EXISTS "img_data" (
-        "imgdata" text NOT NULL
-    );`;
-
-  execute(text).then((result) => {
-    if (result) {
-      res.send({ v: "table created" });
-      console.log("Table created");
-    } else {
-      console.log("eslse");
+      console.log('Updated!');
     }
   });
+  // const client = new Client({
+  //   host: "127.0.0.1",
+  //   user: "postgres",
+  //   database: "fusion",
+  //   password: "Tesla@261600",
+  //   port: 5000,
+  // });
+
+  // console.log(req.body.imgdata);
+  // const execute = async (query) => {
+  //   await client.connect(); // gets connection
+  //   await client.query(query);
+  //   try {
+  //     let insertQuery = `INSERT INTO "img_data" (
+        
+  //       "imgdata"
+  //       )
+  //       values('${req.body.imgdata}')`;
+
+  //     // eslint-disable-next-line no-unused-vars
+  //     client.query(insertQuery, (err, result) => {
+  //       if (!err) {
+  //         console.log("img_Insertion was successful");
+  //         res.send({ v: "img_Insertion was successful" });
+  //       } else {
+  //         console.log(err.message);
+  //       }
+  //     });
+  //     return true;
+  //   } catch (error) {
+  //     console.error(error.stack);
+  //     return false;
+  //   } finally {
+  //     await client.end(); // closes connection
+  //   }
+  // };
+  // const text = `
+  //   CREATE TABLE IF NOT EXISTS "img_data" (
+  //       "imgdata" text NOT NULL
+  //   );`;
+
+  // execute(text).then((result) => {
+  //   if (result) {
+  //     res.send({ v: "table created" });
+  //     console.log("Table created");
+  //   } else {
+  //     console.log("eslse");
+  //   }
+  // });
 });
 app.get("/home", (req, res) => {
   res.send("sandeep patel");
 });
 let otpval = 12;
-let emailval = "";
-app.post("/send", (req, res) => {
-  emailval = req.body.email.toLowerCase();
-  otpval = Math.floor(100000 + Math.random() * 900000);
-  console.log(otpval);
-  let transport = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    secureConnection: false,
-    port: 587,
-    tls: {
-      ciphers: "SSLv3",
-    },
-    requireTLS: true,
-    auth: {
-      user: "sandeepkrpatel2002@gmail.com",
-      pass: "riuwaswnpaqafoga",
-    },
-    // tls: { rejectUnauthorized: true },
-  });
-  const mailOptions = {
-    from: "sandeepkrpatel2002@gmail.com", // Sender address
-    to: `${emailval}`, // List of recipients
-    subject: "Node Mailer by sandeep", // Subject line
-    text: `Your OTP is ${otpval} send by sandeep code`, // Plain text body
-  };
+let emailorphone = "";
 
-  transport.sendMail(mailOptions, function (err, info) {
-    if (err) {
-      console.log("ssssssss");
-      console.log(err);
-      return res.send("not send");
-    } else {
-      console.log(info);
-      return res.send({ istrue: true });
-    }
-  });
+// app.post('/sendatphone',(req,res)=>{
+  
+// });
+app.post("/sendotp", (req, res) => {
+  if(emailvalidator.validate(req.body.emailorphone)){
+    console.log("email.......");
+    emailorphone = req.body.emailorphone.toLowerCase();
+    otpval = Math.floor(100000 + Math.random() * 900000);
+    console.log(otpval);
+    let transport = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      secureConnection: false,
+      port: 587,
+      tls: {
+        ciphers: "SSLv3",
+      },
+      requireTLS: true,
+      auth: {
+        user: "sandeepkrpatel2002@gmail.com",
+        pass: "riuwaswnpaqafoga",
+      },
+      // tls: { rejectUnauthorized: true },
+    });
+    const mailOptions = {
+      from: "sandeepkrpatel2002@gmail.com", // Sender address
+      to: `${emailorphone}`, // List of recipients
+      subject: "Node Mailer by sandeep", // Subject line
+      text: `Your OTP is ${otpval} send by sandeep code`, // Plain text body
+    };
+  
+    transport.sendMail(mailOptions, function (err, info) {
+      if (err) {
+        console.log("ssssssss");
+        console.log(err);
+        return res.send("not send");
+      } else {
+        console.log(info);
+        return res.send({ istrue: true });
+      }
+    });
+  }else{
+    console.log("this is not email");
+    console.log("sending at phone.....");
+    emailorphone=req.body.emailorphone;
+    otpval = Math.floor(100000 + Math.random() * 900000);
+    const accountSid = "ACcabaf757707dbd83323156057eb1621c";
+    const authToken = "b36ac79462cc8e4c617f1892f53f53a3";
+    const client = require('twilio')(accountSid, authToken);
+  
+    client.messages
+      .create({
+        body: `Your OTP Is ${otpval} `,
+        from: '+1 567 409 2840',
+        to: `+91${emailorphone}`
+      })
+      .then(message => {
+        console.log(message.sid);
+        res.send({
+          istrue:true,
+          t:"from phonesend"
+        });
+      });
+  }
 });
 
 app.post("/checkotp", async (req, res) => {
+  let variable="mobilenum";
   if (otpval == req.body.otp) {
     console.log("same otp");
+    if(emailvalidator.validate(emailorphone)){
+      variable="email";
+    }
     try {
       console.log("try_checking");
       const client = new Client({
@@ -197,10 +239,10 @@ app.post("/checkotp", async (req, res) => {
       });
       await client.connect();
       client.query(
-        `Select * from "extentionlogin" Where  extension_id='3234443' AND email='${emailval}'`,
+        `Select * from "extentionlogin" Where  extension_id='3234443' AND ${variable}='${emailorphone}'`,
         (err, result) => {
           if (!err) {
-            console.log(emailval);
+            console.log(emailorphone);
             console.log("!err");
             console.log(result.rowCount);
             if (result.rowCount) {
@@ -225,7 +267,7 @@ app.post("/checkotp", async (req, res) => {
                 msg: "otp logged in successfully",
                 istrue: true,
                 token: token,
-                user: emailval,
+                user: emailorphone,
               });
             }
           }
@@ -246,72 +288,83 @@ app.post("/checkotp", async (req, res) => {
 app.post("/sing", async (req, res) => {
   let newUsername = req.body.name;
   let newPass = req.body.pass;
-
+  
   let newEmail = req.body.email;
   let loweremail = newEmail.toLowerCase();
+  const mobilenum=req.body.mobilenum;
   console.log(loweremail);
-
-  const client = new Client({
-    host: "127.0.0.1",
-    user: "postgres",
-    database: "fusion",
-    password: "Tesla@261600",
-    port: 5000,
-  });
-
-  const execute = async (query) => {
-    newPass = await bcrypt.hash(newPass, 8);
-
-    await client.connect(); // gets connection
-    await client.query(query);
-    try {
-      console.log("pasword", newPass);
-
-      let insertQuery = `INSERT INTO "extentionlogin" (
-        "extension_id" ,
-        "client_id" ,
-        "Username" ,
-        "email" ,
-        "password"
-        )
-        values(${3234443}, ${21}, '${newUsername}', '${loweremail}', '${newPass}')`;
-
-      // eslint-disable-next-line no-unused-vars
-      client.query(insertQuery, (err, result) => {
-        if (!err) {
-          console.log("Insertion was successful");
-          res.send({ v: "Insertion was successful" });
-        } else {
-          console.log(err.message);
-        }
-      });
-      return true;
-    } catch (error) {
-      console.error(error.stack);
-      return false;
-    } finally {
-      await client.end(); // closes connection
-    }
-  };
-
-  const text = `
-    CREATE TABLE IF NOT EXISTS "extentionlogin" (
-        "extension_id" VARCHAR(64),
-	    "client_id" SERIAL,
-      "Username" VARCHAR(256),
-        "email" text NOT NULL UNIQUE,
-        "password" VARCHAR(256)
-        
-    );`;
-
-  execute(text).then((result) => {
-    if (result) {
-      res.send({ v: "table created" });
-      console.log("Table created");
-    } else {
-      console.log("eslse");
-    }
-  });
+  if(emailvalidator.validate(req.body.email)){
+    const client = new Client({
+      host: "127.0.0.1",
+      user: "postgres",
+      database: "fusion",
+      password: "Tesla@261600",
+      port: 5000,
+    });
+  
+    const execute = async (query) => {
+      newPass = await bcrypt.hash(newPass, 8);
+  
+      await client.connect(); // gets connection
+      await client.query(query);
+      try {
+        console.log("pasword", newPass);
+  
+        let insertQuery = `INSERT INTO "extentionlogin" (
+          "extension_id" ,
+          "client_id" ,
+          "Username" ,
+          "email" ,
+          "mobilenum",
+          "password"
+          )
+          values(${3234443}, ${21}, '${newUsername}', '${loweremail}','${mobilenum}', '${newPass}')`;
+  
+        // eslint-disable-next-line no-unused-vars
+        client.query(insertQuery, (err, result) => {
+          if (!err) {
+            console.log("Insertion was successful");
+            res.send({ v: "Insertion was successful" });
+          } else {
+            console.log(err.message);
+          }
+        });
+        return true;
+      } catch (error) {
+        console.error(error.stack);
+        return false;
+      } finally {
+        //await client.end(); // closes connection
+      }
+    };
+  
+    const text = `
+      CREATE TABLE IF NOT EXISTS "extentionlogin" (
+          "extension_id" VARCHAR(64),
+        "client_id" SERIAL,
+        "Username" VARCHAR(256),
+          "email" text NOT NULL UNIQUE,
+          "mobilenum" text,
+          "password" VARCHAR(256)
+          
+      );`;
+  
+    execute(text).then((result) => {
+      if (result) {
+        res.send({ v: "table created" });
+        console.log("Table created");
+      } else {
+        console.log("eslse");
+      }
+    });
+  }else{
+    console.log("email not valied");
+    res.status(400).send({
+      istrue:false,
+      t:"emailnot valie"
+    });
+  }
+  
 });
 app.post("/login", async (req, res) => {
   let email = req.body.email.toLowerCase();

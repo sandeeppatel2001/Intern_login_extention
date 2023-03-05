@@ -1,7 +1,7 @@
-let button = document.getElementById("requestPermission");
+const button = document.getElementById('requestPermission');
 
 button.onclick = () => {
-  console.log("ya");
+  console.log('ya');
   navigator.getUserMedia =
     navigator.getUserMedia ||
     navigator.webkitGetUserMedia ||
@@ -11,13 +11,13 @@ button.onclick = () => {
     navigator.getUserMedia(
       { audio: false, video: { width: 1280, height: 720 } },
       (stream) => {
-        console.log("success");
+        console.log('success');
       },
       (err) => {
         console.error(`The following error occurred: ${err.name}`);
       }
     );
   } else {
-    console.log("getUserMedia not supported");
+    console.log('getUserMedia not supported');
   }
 };

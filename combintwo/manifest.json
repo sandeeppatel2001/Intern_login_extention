@@ -4,12 +4,7 @@
   "version": "1.0.0",
   "author": "sandeep",
   "description": "A chrome extension that automatically logs in to github",
-  "icons": {
-    "16": "./icon.jpg",
-    "32": "./icon.jpg",
-    "48": "./icon.jpg",
-    "128": "./icon.jpg"
-  },
+  
   "content_scripts": [
     {
       "js": ["test4.js"],
