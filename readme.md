@@ -48,3 +48,7 @@ then you have to login as follow
 you can also login by sending otp at registered email or phone number
 
 ![Screenshot](otppage.png)
+
+# how hole thinks works???
+
+comming soon .....
