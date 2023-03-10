@@ -1,18 +1,11 @@
 console.log('bacground');
 
-// chrome.storage.local.set(
-//   {
-//     r: "sandeep",
-//   },
-//   function () {
-//     console.log("Storage Succesful");
-//   }
-// );
-chrome.storage.local.get('r', function (st) {
-  console.log(st);
-  console.log(st.r);
-});
-
+// chrome.storage.local.get('r', function (st) {
+//   console.log(st);
+//   console.log(st.r);
+// });
+// we are taking tree types massegs "get-user-data","save-token","get-token"
+// acording to massege we perform operation
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log(sender);
 
@@ -45,10 +38,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // }, 1);
   return true;
 });
-
-// console.log(
-//   sender.tab
-//     ? "from a content script:" + sender.tab.url
-//     : "from the extension"
-// );
-/// //////////////////////////////

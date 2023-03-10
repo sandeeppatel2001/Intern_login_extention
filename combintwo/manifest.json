@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "author": "sandeep",
   "description": "A chrome extension that automatically logs in to github",
-  
+
   "content_scripts": [
     {
-      "js": ["test4.js"],
+      "js": ["main.js"],
       "type": "module",
       "matches": ["<all_urls>"]
     }

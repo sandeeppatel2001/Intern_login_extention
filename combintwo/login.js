@@ -1,5 +1,5 @@
 const button = document.querySelector('button');
-
+// just for style
 button.addEventListener('mouseover', () => {
   button.style.backgroundColor = 'black';
   button.style.color = 'white';
@@ -30,16 +30,17 @@ button.addEventListener('mouseleave', () => {
     input.style.transform = 'scale(1)';
   });
 });
-
+// when clicked signup button then go signup page
 document.getElementById('signup').addEventListener('click', (e) => {
   e.preventDefault();
   window.location.replace('./popup-sign-in.html');
 });
+// when clicked send button then go send otp page
 document.getElementById('otp').addEventListener('click', (e) => {
   e.preventDefault();
   window.location.replace('./sendotp.html');
 });
-
+// when user login then send data to backend for chaking user exist or not
 document.querySelector('form').addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -98,7 +99,8 @@ document.querySelector('form').addEventListener('submit', (event) => {
 });
 
 /// ////////////////////////////////////
-
+// popup page loaded then we chack that user is already loged in or not
+// if user is already logedin then show "ypu are loged in " page"
 window.onload = async function () {
   chrome.runtime.sendMessage(
     'oiklfjbjmdhnakcjhkabcmepmkneaogf',

@@ -10,7 +10,7 @@ async function test3 (url, id, token) {
   const payload = {
     host: 'lms.iitjammu.com',
     url,
-    time: 2222,
+    time: new Date(),
     ClientId: 'mdskdsfjkdvndksjvvnkfv',
     extentionid: id
   };
@@ -181,8 +181,8 @@ async function test3 (url, id, token) {
             .join('');
           console.log(hexbit);
           // eslint-disable-next-line no-unused-expressions
-          (enc = new TextEncoder('UTF-8'));
-          (hexbit = enc.encode(hexbit));
+          enc = new TextEncoder('UTF-8');
+          hexbit = enc.encode(hexbit);
           crypto.subtle.digest('SHA-256', hexbit).then((t) => {
             console.log(t);
             const sha256 = [...new Uint8Array(t)]
@@ -231,7 +231,7 @@ async function test3 (url, id, token) {
     );
     return new TextDecoder().decode(msg);
   }
-  async function HmacTt (key, payload) {
+  async function hmac_tt (key, payload) {
     let enc = new TextEncoder();
     enc = enc.encode(payload);
     const r = new TextEncoder();
@@ -289,9 +289,10 @@ async function test3 (url, id, token) {
             const secret = await deriveSharedSecret(ecdhprivk, res);
             console.log(secret);
             console.log('after derisecret function');
-            const hmacdata = nodedata.pub_key + nodedata.iv + nodedata.ciphertext;
+            const hmacdata =
+              nodedata.pub_key + nodedata.iv + nodedata.ciphertext;
             console.log(hmacdata);
-            const hmac2 = await HmacTt(secret.hmac, hmacdata);
+            const hmac2 = await hmac_tt(secret.hmac, hmacdata);
             console.log(hmac2);
             if (nodedata.hmac === hmac2) {
               console.log('sfsdvdfvgrg');
@@ -328,11 +329,11 @@ async function test3 (url, id, token) {
                     }
                     if (inputtag.type === 'password') {
                       const pertag = v[v.length - 2];
-
+                      const ptag = inputtag;
                       setTimeout(() => {
                         // inputtag.autocomplete = "new-password";
                         console.log(Password);
-                        inputtag.value = Password;
+                        ptag.value = Password;
 
                         if (!flag) {
                           console.log('uperpassword');
