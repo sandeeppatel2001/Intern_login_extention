@@ -55,7 +55,14 @@ Go to security
 
 stackoverflow(https://stackoverflow.com/questions/19877246/nodemailer-with-gmail-and-nodejs)
 
-### setting nodemail you have to replace your email id and password ganerated by google during setup at at tranceport function.
+### after setting nodemail at google you have to replace your email id and password ganerated by google during setup at at tranceport function.
+
+## sending otp at phone by using twilio
+
+for this you have to follow this link
+[How to Work with your Free Twilio Trial Account](https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account)
+
+after setup thi you have to change accountSid and authToken with your accountSid and authToken and also update from(from where you have to send massege) in client.messages.create funtion with you twilio number
 
 # how to start server
 
