@@ -470,69 +470,67 @@ app.post("/login", async (req, res) => {
     });
     await client.connect();
     //matching credentials if match then do login
-    client
-      .query(
-        `Select * from "extentionlogin" Where  extension_id='3234443' AND email='${email}'`,
-        (err, result) => {
-          if (!err) {
-            console.log("!err");
-            console.log(result.rowCount);
-            if (result.rowCount) {
-              //console.log("result", result);
+    client.query(
+      `Select * from "extentionlogin" Where  extension_id='3234443' AND email='${email}'`,
+      (err, result) => {
+        if (!err) {
+          console.log("!err");
+          console.log(result.rowCount);
+          if (result.rowCount) {
+            //console.log("result", result);
 
-              console.log("result.rows[0]", result.rows[0]);
-              //we were save password as encrypted form so we have to encrypt then match
-              bcrypt
-                .compare(password, result.rows[0].password)
-                .then((isMatch) => {
-                  if (isMatch === false) {
-                    console.log("incorrect");
-                    return res.status(401).send({
-                      istrue: false,
-                      msg: "email or Password is incorrect ",
-                    });
-                  } else {
-                    const token = jwt.sign(
-                      { id: result.rows[0].client_id.toString() },
-                      "sandeep",
+            console.log("result.rows[0]", result.rows[0]);
+            //we were save password as encrypted form so we have to encrypt then match
+            bcrypt
+              .compare(password, result.rows[0].password)
+              .then((isMatch) => {
+                if (isMatch === false) {
+                  console.log("incorrect");
+                  return res.status(401).send({
+                    istrue: false,
+                    msg: "email or Password is incorrect ",
+                  });
+                } else {
+                  const token = jwt.sign(
+                    { id: result.rows[0].client_id.toString() },
+                    "sandeep",
 
-                      {
-                        expiresIn: 3000, // 1 week
-                      }
-                    );
-                    console.log(token);
-                    // fs.writeFile("tokdata.txt", token, function (err) {
-                    //   if (err) throw err;
-                    //   console.log("Saved!");
-                    // });
+                    {
+                      expiresIn: 3000, // 1 week
+                    }
+                  );
+                  console.log(token);
+                  // fs.writeFile("tokdata.txt", token, function (err) {
+                  //   if (err) throw err;
+                  //   console.log("Saved!");
+                  // });
 
-                    console.log("aa", {
-                      msg: "logged in successfully",
-                      user: result.rows[0].Username,
-                      token,
-                    });
+                  console.log("aa", {
+                    msg: "logged in successfully",
+                    user: result.rows[0].Username,
+                    token,
+                  });
 
-                    return res.status(200).send({
-                      msg: "logged in successfully",
-                      istrue: true,
-                      token: token,
-                      user: email,
-                    });
-                  }
-                });
-              /////////////////////////////////////////
-            } else {
-              return res.status(401).send({
-                msg: "email or password is incorrect",
-                istrue: false,
+                  return res.status(200).send({
+                    msg: "logged in successfully",
+                    istrue: true,
+                    token: token,
+                    user: email,
+                  });
+                }
               });
-            }
+            /////////////////////////////////////////
           } else {
-            console.log(err);
+            return res.status(401).send({
+              msg: "email or password is incorrect",
+              istrue: false,
+            });
           }
+        } else {
+          console.log(err);
         }
-      )
-      .then(() => client.end());
+      }
+    );
   } catch (err) {
     console.log("login catch function error", err);
   }
