@@ -93,6 +93,6 @@ you can also login by sending otp at registered email or phone number
 
 # how hole code works???
 
-## You can see the complete code which is commented, the comments explain which function is doing what
+## You can see the complete code which is commented, the comments explain which function is doing what.
 
 ### some encryption process(https://github.com/mai1x9/internship-sandeep/tree/main/passwd-extension#readme)
