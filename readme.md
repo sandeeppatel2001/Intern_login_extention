@@ -29,12 +29,18 @@ You have to run npm i (not npm init -y and not other commands otherwise you have
 ## sending otp at mail by using nodemailer
 
 You must allow nodemailer to mail from Google settings
+
 for that you have to do following steps-
+
 1 Log in to your Google account
 Go to security
+
 2 Under Signing in to Google enable 2-Step Verification
+
 3 Under Signing in to Google click on App passwords.
+
 4 You'll now generate a new password. Select the app as Mail and the device as Other (Custom name) and name it.
+
 5 Save the app password
 
 # how to start server
