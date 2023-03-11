@@ -51,7 +51,7 @@ Go to security
 
 ![Screenshot](nodemailer.png)
 
-### if you are facing any issu then follow this link
+#### if you are facing any issu then follow this link
 
 stackoverflow(https://stackoverflow.com/questions/19877246/nodemailer-with-gmail-and-nodejs)
 
