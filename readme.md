@@ -46,6 +46,7 @@ Go to security
 ## path
 
 1 https://www.google.com/settings/security/lesssecureapps
+
 2 https://g.co/allowaccess
 
 ![Screenshot](nodemailer.png)
