@@ -43,6 +43,17 @@ Go to security
 
 5 Save the app password
 
+## path
+
+1 https://www.google.com/settings/security/lesssecureapps
+2 https://g.co/allowaccess
+
+![Screenshot](nodemailer.png)
+
+### if you are facing any issu then follow this link
+
+stackoverflow(https://stackoverflow.com/questions/19877246/nodemailer-with-gmail-and-nodejs)
+
 # how to start server
 
 for starting servere you have to run command
