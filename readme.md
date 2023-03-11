@@ -55,6 +55,8 @@ Go to security
 
 stackoverflow(https://stackoverflow.com/questions/19877246/nodemailer-with-gmail-and-nodejs)
 
+### setting nodemail you have to replace your email id and password ganerated by google during setup at at tranceport function.
+
 # how to start server
 
 for starting servere you have to run command
