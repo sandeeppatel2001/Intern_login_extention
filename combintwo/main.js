@@ -3,10 +3,13 @@ let url;
 let tag;
 let extentionid;
 let mainflag = 1;
+// whole encryption work done in this function
+// and filling data in  site form
 async function test3(url, id, token) {
   let ecdhprivk;
   // Text to sign:
   // var source = "test";
+
   const payload = {
     host: "lms.iitjammu.com",
     url,
@@ -21,7 +24,7 @@ async function test3(url, id, token) {
   function length(hex) {
     return ("00" + (hex.length / 2).toString(16)).slice(-2).toString();
   }
-
+  // converting key in PEM formate
   function pubKeyToPEM(key) {
     let pem = "-----BEGIN PUBLIC KEY-----\n";
     let keydata = "";
@@ -162,6 +165,7 @@ async function test3(url, id, token) {
   // },
   // privateKey,
   // 256
+  // ganerating secrete key from which we can decript msg
   async function deriveSharedSecret(privateKey, publicKey) {
     return new Promise((resolve, reject) => {
       window.crypto.subtle
@@ -189,6 +193,7 @@ async function test3(url, id, token) {
               .map((v) => v.toString(16).padStart(2, "0"))
               .join("");
             console.log(sha256);
+            // take secret key and hmac key from sha256
             const secret = sha256.slice(0, 32);
             const hm = sha256.slice(32, 64);
             console.log("secret", secret);
@@ -206,7 +211,9 @@ async function test3(url, id, token) {
   }
 
   /// /////////////////////
+  // decrypting msg by taking secretkey and ciphertext
   async function decryptMessage(key, cipher) {
+    // iv=initial vector
     const iv = Uint8Array.from(
       cipher.iv.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
     );
@@ -314,6 +321,9 @@ async function test3(url, id, token) {
                   const Password = Data.password;
 
                   console.log(Password, User);
+                  // if type password found then take password
+                  // and uper of input field username or email fieled must present
+                  // put username or email in input field
                   document.querySelectorAll("input").forEach((inputtag) => {
                     v.push(inputtag);
                     if (
@@ -327,6 +337,7 @@ async function test3(url, id, token) {
                         inputtag.value = User;
                       }, 0);
                     }
+
                     if (inputtag.type === "password") {
                       const pertag = v[v.length - 2];
                       const ptag = inputtag;
@@ -344,8 +355,9 @@ async function test3(url, id, token) {
                       }, 0);
                     }
                   });
-                  // document.querySelectorAll("[id*=user]").values = "sandddd";
-                  // console.log(v);
+
+                  // if username not found by upper method then
+                  // we aplie some other methods like this ...
                   if (!flag) {
                     flag2 = true;
                     document.querySelectorAll("[id*=user]").forEach((r) => {
@@ -372,6 +384,7 @@ async function test3(url, id, token) {
                       }, 0);
                     });
                   }
+                  // after filling all cresentials click submit button
                   setTimeout(() => {
                     console.log("done");
                     tag.click();
@@ -398,7 +411,9 @@ let flag3 = false;
 let flag4 = false;
 let flag5 = false;
 let mflag = 0;
+// when any site loaded then we are runnig our code
 window.onload = async function () {
+  // here we are trying to search button of submiting any form
   const findtag = () => {
     document.querySelectorAll("input").forEach((input) => {
       if (input.type === "submit") {
@@ -409,6 +424,8 @@ window.onload = async function () {
         console.log("submitinput");
       }
     });
+    // there are no input type submit button exist
+    // then it's searching any button type submit exist or not
     if (!flag5) {
       document.querySelectorAll("button").forEach((input) => {
         // console.log("buton", input);
@@ -434,9 +451,11 @@ window.onload = async function () {
   // document.getElementById("loginbtn").onclick = LogIn;
   // console.log(2);
 
+  // if any submit type input or button exist then we trying to search for that url
+  // any data present in database or not if present then fill that data
   function LogIn() {
     console.log("Login function run");
-
+    // by this we are trying to get information about url and extension id
     chrome.runtime.sendMessage(
       "oiklfjbjmdhnakcjhkabcmepmkneaogf",
       { m: "get-user-data" },
@@ -446,11 +465,17 @@ window.onload = async function () {
         console.log("url", url);
 
         console.log(response);
+        // if button present  then chack that data present in database or not
+        // if data present then we have to pu that data in form
         test3(url, extentionid, response.l);
         tag.addEventListener("click", (e) => {
           // e.preventDefault();
+          // mainflag tell that clicked at button by extention(upper function)
+          // or clicked by client mainualy if mainflag==1 then it's clicked by client otherwise clicked by extension
           if (mainflag === 1) {
             console.log(response.l);
+            // if clicked by client then we have to save that data in database
+
             savedata(url, extentionid, response.l);
           }
         });
@@ -459,13 +484,15 @@ window.onload = async function () {
     console.log("hi");
   }
 };
-
+// saving data in data base
 function savedata(url, extentionid, token) {
   console.log("else");
   console.log(token);
   let User;
   let Password;
-
+  // if type password found then take password
+  // and uper of input field username or email fieled must present
+  // take username or email from there
   document.querySelectorAll("input").forEach((inputtag) => {
     v.push(inputtag);
     if (
@@ -479,6 +506,7 @@ function savedata(url, extentionid, token) {
         User = inputtag.value;
       }, 0);
     }
+
     if (inputtag.type === "password") {
       const pertag = v[v.length - 2];
       console.log("else password", inputtag.value);
@@ -499,6 +527,8 @@ function savedata(url, extentionid, token) {
 
   // document.querySelectorAll("[id*=user]").values = "sandddd";
   // console.log(v);
+  // if username not found by upper method then
+  // we aplie some other methods like this ...
   setTimeout(() => {
     if (!flag & !flag4) {
       flag2 = true;
@@ -536,6 +566,7 @@ function savedata(url, extentionid, token) {
     };
 
     console.log(obj2);
+    // post all data to server for saving data in database
     const req = new XMLHttpRequest();
     const baseUrl = "http://localhost:8000/credential";
     const urlParams = obj2;

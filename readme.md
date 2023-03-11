@@ -60,9 +60,11 @@ stackoverflow(https://stackoverflow.com/questions/19877246/nodemailer-with-gmail
 ## sending otp at phone by using twilio
 
 for this you have to follow this link
-[How to Work with your Free Twilio Trial Account](https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account)
+[How to create your Free Twilio Trial Account](https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account)
 
-after setup thi you have to change accountSid and authToken with your accountSid and authToken and also update from(from where you have to send massege) in client.messages.create funtion with you twilio number
+after setup thi you have to change accountSid and authToken with your accountSid and authToken and also update from(from where you have to send massege) in "client.messages.create" funtion with your twilio number
+
+#### in free version you have to verify with youn phone number where you want to send otp also but for paid version you can send otp any where
 
 # how to start server
 
@@ -89,6 +91,6 @@ you can also login by sending otp at registered email or phone number
 
 ![Screenshot](otppage.png)
 
-# how hole thinks works???
+# how hole code works???
 
-comming soon .....
+## first understand extension(front end) code
