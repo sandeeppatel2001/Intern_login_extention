@@ -5,7 +5,7 @@ By using this we can skip login page after login for site then this extension ta
 # how to set-up
 
 Download final folder, inside final folder there are two folders one is extension(frontend) and another is backend, we need setup as follow
-
+<!-- 
 ## how to setup extension(frontend) ???
 
 go to browser extension setting , click developer mood on then click load unpack and go inside your extension(frontend) folder (make sure you are inside extension (frontend) folder where all different file like server.js , img.txt and other present ) click select folder and your extension is ready to go make sure you extension is turn on
@@ -23,7 +23,7 @@ npm i
 ```
 
 You have to run npm i (not npm init -y and not other commands otherwise you have to install all packages separately)
-
+-->
 # set for sending otp by mail or phone
 
 ## sending otp at mail by using nodemailer
