@@ -179,7 +179,7 @@ app.post("/sendotp", (req, res) => {
         user: "sandeepkrpatel2002@gmail.com",
         //your  password it's ganerated by google when
         //you allow from google setting to send mail from nodemailer
-        pass: "riuwaswnpaqafoga",
+        pass: "",
       },
       // tls: { rejectUnauthorized: true },
     });
@@ -206,8 +206,8 @@ app.post("/sendotp", (req, res) => {
     emailorphone = req.body.emailorphone;
     otpval = Math.floor(100000 + Math.random() * 900000);
     // this is twilio Sid and authtoken that's ganerated after resister at twilio
-    const accountSid = "ACcabaf757707dbd83323156057eb1621c";
-    const authToken = "b36ac79462cc8e4c617f1892f53f53a3";
+    const accountSid = "";
+    const authToken = "";
     const client = require("twilio")(accountSid, authToken);
 
     client.messages
