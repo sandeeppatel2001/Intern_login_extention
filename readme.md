@@ -1,4 +1,4 @@
-# what does this extension do
+# what does this extension do   
 
 By using this we can skip login page after login for site then this extension takes your credentials and save it in database, while saving your credentials we use end-to-end encryption
 
